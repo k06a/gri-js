@@ -22,9 +22,7 @@ function submitData () {
   .catch(function (error) {
     console.log(error);
   });
+    console.log("data submitted to gaia chain")
+    setTimeout(submitData, 3000);
 }
-
-setInterval(()=>{
-    submitData()
-    console.log("data submited to Gaia Chain")
-}, 3000)
+submitData();
