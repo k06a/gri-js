@@ -2,9 +2,20 @@ const SHA256 = require("crypto-js/sha256");
 const EthCrypto = require('eth-crypto');
 const express = require('express')
 const app = express()
+const storage = require('node-persist');
+
+//initialize gaia persistent database
+storage.init({
+	dir: './gaia-db',
+	stringify: JSON.stringify,
+	parse: JSON.parse,
+    encoding: 'utf8'
+});
+
 
 //creates Identity for the Validating Node
 const validatorWallet = EthCrypto.createIdentity();
+console.log("your wallet:" + validatorWallet.address)
 
 //public key, private key and address of the validator wallet
 const pubKey = validatorWallet.publicKey
@@ -26,10 +37,10 @@ let nonce = 0
 //this creates blocks
 class Block {
     //a block has: 1. Data 2. Timestamp 3. prevHash 4. blockHash 5. Nonce
-    constructor(_data, _blockhash){
+    constructor(_data, _blockhash, _prevhash){
         this.timestamp = Date.now()
         this.data = _data
-        this.prevHash = blockchain[blockchain.length - 1].blockHash
+        this.prevHash = _prevhash
         this.nonce = nonce ++
         this.blockHash = _blockhash
     }
@@ -65,7 +76,8 @@ async function addDataToPool(newData, newMetaData){
 
 //this will generate new block on the POA blockchain
 async function addBlock(block){
-    blockchain.push(block)
+    //blockchain.push(block)
+    await storage.setItem(nonce.toString(), block)
 }
 
 //this will publish current block hash to a Plasma contract
@@ -78,11 +90,14 @@ async function mineAndSubmitBlock(){
     const d = await new Data(encryptedData, address, obj.meta)
     console.log(d)
     //preparing Blockchain
-    newBlockHash = await hash(blockchain[blockchain.length - 1].blockHash + d + nonce)
-    const b = await new Block(d, newBlockHash.toString())
+    let lastBlock = await storage.getItem(nonce.toString());
+    newBlockHash = await hash(lastBlock.blockHash + d + nonce)
+    const b = await new Block(d, newBlockHash.toString(), lastBlock.blockHash)
     console.log(b)
     const myBlockchain = await addBlock(b)
-    console.log("block number "+ blockchain.length +" block hash is " + JSON.stringify(blockchain[blockchain.length - 1].blockHash))
+    let storedBlock = await storage.getItem(nonce.toString());
+    let blockNum = storedBlock.nonce + 1 
+    console.log("block number "+ blockNum +" block hash is " + JSON.stringify(storedBlock.blockHash))
 }
 //RESTFUL ENDPOINT
 app.post('/submitData', (req, res) => {
@@ -106,10 +121,13 @@ let mockMeta = {
 
 //this will mine and submit new block to the rootchain every 5 seconds
 setInterval(async function() {
+    //await storage.clear();
+    await storage.setItem('0',genesis)
     //add data directly using mock data
     await addDataToPool(mockData, mockMeta)
     //console.log(dataPool)
     await mineAndSubmitBlock()
+    //console.log(await storage.getItem(nonce.toString()));
 }, 5000);
 
 
