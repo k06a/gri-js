@@ -1,12 +1,9 @@
-//starts the IoT SDK 
-const rpiDhtSensor = require('rpi-dht-sensor');
-const dht = new rpiDhtSensor.DHT22(2);
+var sensor = require('node-dht-sensor');
 
-function read () {
-    var readout = dht.read();
-   
-      console.log('Temperature: ' + readout.temperature.toFixed(2) + 'C, ' +
-          'humidity: ' + readout.humidity.toFixed(2) + '%');
-      setTimeout(read, 5000);
-  }
-read();
+sensor.read(22, 4, function(err, temperature, humidity) {
+    if (!err) {
+        console.log('temp: ' + temperature.toFixed(1) + '°C, ' +
+            'humidity: ' + humidity.toFixed(1) + '%'
+        );
+    }
+});
