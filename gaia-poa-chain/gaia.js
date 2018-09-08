@@ -3,6 +3,16 @@ const EthCrypto = require('eth-crypto');
 const express = require('express')
 const app = express()
 const storage = require('node-persist');
+const GaiaArtifact = require('./gaia-rootchain/build/contracts/RootChain.json');
+const abi = require('./gaia-rootchain/plasmaAbi')
+let Web3 = require('web3');
+let web3 = new Web3('http://localhost:8545')    
+
+//root chain config 
+let contractAddr = "0x09bd8313abb2c975ba596231eb229e7f14ef0b69"
+let operatorAddr = "0x6d9393414c3bede27343b1a65323331ed614a0c2"
+const plasmaContract = new web3.eth.Contract(abi.abi, contractAddr);
+console.log("Root Chain address at: " + contractAddr)
 
 //initialize gaia persistent database
 storage.init({
@@ -12,10 +22,9 @@ storage.init({
     encoding: 'utf8'
 });
 
-
 //creates Identity for the Validating Node
 const validatorWallet = EthCrypto.createIdentity();
-console.log("your wallet:" + validatorWallet.address)
+console.log("your wallet address:" + validatorWallet.address)
 
 //public key, private key and address of the validator wallet
 const pubKey = validatorWallet.publicKey
@@ -48,7 +57,7 @@ class Block {
 }
 
 async function hash(_prevHash, _data, _nonce) {
-    return  SHA256(_prevHash + _data + nonce)
+    return  SHA256(JSON.stringify(_prevHash) + JSON.stringify(_data) + JSON.stringify(nonce))
 }
 
 //this is an example blob of Data
@@ -84,20 +93,25 @@ async function addBlock(block){
 
 //this will mine and submit new block
 async function mineAndSubmitBlock(){
+    //PROCESS DATA
     let obj = dataPool.pop()
     const encryptedData = await encryptData(pubKey, obj.data)
-    //stire encrypted data and necessary params
     const d = await new Data(encryptedData, address, obj.meta)
-    console.log(d)
-    //preparing Blockchain
+    
+    //MINE NEW BLOCK
     let lastBlock = await storage.getItem(nonce.toString());
-    newBlockHash = await hash(lastBlock.blockHash + d + nonce)
+    newBlockHash = await hash(lastBlock.blockHash + d.encryptedData + nonce)
     const b = await new Block(d, newBlockHash.toString(), lastBlock.blockHash)
-    console.log(b)
     const myBlockchain = await addBlock(b)
     let storedBlock = await storage.getItem(nonce.toString());
     let blockNum = storedBlock.nonce + 1 
     console.log("block number "+ blockNum +" block hash is " + JSON.stringify(storedBlock.blockHash))
+
+    //SUBMIT NEW BLOCK TO ROOTCHAIN
+    let newBlock = `0x${storedBlock.blockHash}`
+    plasmaContract.methods.submitBlock(newBlock).send({from: operatorAddr}, function(error, transactionHash){
+        console.log("blockhash submitted to rootchain with hash:" + transactionHash)
+    });
 }
 //RESTFUL ENDPOINT
 app.post('/submitData', (req, res) => {
@@ -109,11 +123,11 @@ app.post('/submitData', (req, res) => {
 app.listen(3000, () => console.log('Gaia Chain endpoint open at port:3000'))
 //THIS IS MOCK DATA
 let mockData = {
-    temperature: 10
+    temperature: 100
 }
 
 let mockMeta = {
-    coordinates: "bangkok",
+    coordinates: "chiangmai",
     deviceType: "temperature_sensor",
     date: Date.now()
 }
@@ -130,4 +144,5 @@ setInterval(async function() {
     //console.log(await storage.getItem(nonce.toString()));
 }, 5000);
 
-
+//0x5d62a9583e651e3c077e577ffd6155c3a8c3d89b31eda36945494c16d005d382
+//0x7465737400000000000000000000000000000000000000000000000000000000
