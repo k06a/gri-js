@@ -13,7 +13,7 @@ function submitData () {
         date: Date.now()
   }
   axios.post('http://192.168.86.97:3000/submitData', {
-    data: data,
+    data: _data,
     meta: _meta
   })
   .then(function (response) {
