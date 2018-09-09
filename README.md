@@ -1,4 +1,4 @@
-![Gaia1.0](./IMG_2695.png)
+![Gaia1.0](./IMG_2695.JPG)
 first implementation of Gaia Protocol with 2 Nodes construction (1 sensor device, 1 blockchain on laptop- connected to the Ethereum blockchain with Plasma construction)
 # Gaia Protocol Reference Implementation
 ## Abstract
