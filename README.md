@@ -46,4 +46,7 @@ You should now have the Proof of Authority blockchain started on port 3000
 ### Running the Gaia IoT SDK 
 YOU MUST BE RUNNING A PI FOR THIS TO WORK
 1. cd into gaia-iot-sdk directory
-2. run `sudo node index`
+2. run `sudo node submitData`
+
+### Running simulated IoT Data
+If you don't have an IoT device, you could the following command inside gaia-poa-chain: `node simulate` -- will simulate IoT streams of data from sdk

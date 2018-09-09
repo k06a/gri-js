@@ -1,3 +1,32 @@
+/*
+The MIT License (MIT)
+=====================
+
+Copyright © `2018` `Pong Cheecharern, Gain Kenchayuth`
+
+Permission is hereby granted, free of charge, to any person
+obtaining a copy of this software and associated documentation
+files (the “Software”), to deal in the Software without
+restriction, including without limitation the rights to use,
+copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the
+Software is furnished to do so, subject to the following
+conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+OTHER DEALINGS IN THE SOFTWARE.
+*/
+
+
 const SHA256 = require("crypto-js/sha256");
 const EthCrypto = require('eth-crypto');
 const express = require('express')
@@ -114,14 +143,19 @@ async function mineAndSubmitBlock(){
     });
 }
 //RESTFUL ENDPOINT
+
+app.use(express.json());
+
 app.post('/submitData', (req, res) => {
-    res.send('Data Submited to Gaia Chain')
-    addDataToPool(req.data, req.meta)
+    res.status(200).json({success: "Data Submitted to DataPool"});
+    //console.log(req)
+    addDataToPool(req.body.data, req.body.meta)
 })
 
 //open port
 app.listen(3000, () => console.log('Gaia Chain endpoint open at port:3000'))
-//THIS IS MOCK DATA
+
+//THIS IS SAMPLE MOCK DATA
 let mockData = {
     temperature: 100
 }
@@ -137,8 +171,8 @@ let mockMeta = {
 setInterval(async function() {
     //await storage.clear();
     await storage.setItem('0',genesis)
-    //add data directly using mock data
-    await addDataToPool(mockData, mockMeta)
+    //uncomment below to add data directly with a mock data
+    //await addDataToPool(mockData, mockMeta)
     //console.log(dataPool)
     await mineAndSubmitBlock()
     //console.log(await storage.getItem(nonce.toString()));
