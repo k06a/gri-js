@@ -1,5 +1,5 @@
-![Gaia1.0](./logo-gaia.png | width=50% )
-
+![Gaia1.0](./IMG_2695.png)
+first implementation of Gaia Protocol with 2 Nodes construction (1 sensor device, 1 blockchain on laptop- connected to the Ethereum blockchain with Plasma construction)
 # Gaia Protocol Reference Implementation
 ## Abstract
 Gaia Protocol enables the impact innovators of tomorrow to gain access and collect relevant data. By providing a turnkey IoT solution on top of a public decentralized data infrastructure.”
