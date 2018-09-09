@@ -1,13 +1,17 @@
+![Gaia1.0](./logo-gaia.png)
 # Gaia Protocol Reference Implementation
+## Abstract
+Gaia Protocol enables the impact innovators of tomorrow to gain access and collect relevant data. By providing a turnkey IoT solution on top of a public decentralized data infrastructure.”
 
-![Gaia1.0](./IMG_2695.JPG)
+## Contribution
+Please refer to the contribution guideline
 
 ## Project Directory
 Project Contains:
 1. gaia-iot-sdk: client SDK for IoT Devices.. In this first iteration we are using DHT-22 Temperature and Humidity sensor.
 2. gaia-poa-chain: a blockchain running on proof of authority validator 
     - gaia-db: persistent on-disk database containing climate data
-    - gaia-rootchain: smart contracts to be deployed on Ethereum blockchain
+    - gaia-rootchain: Plasma smart contract to be deployed on Ethereum blockchain
 
 for the sake of simplicity, current construction will include one datablob per
 1 block, and each block will be processed in sequential order (First in, First out)
