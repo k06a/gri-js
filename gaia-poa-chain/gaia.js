@@ -143,6 +143,3 @@ setInterval(async function() {
     await mineAndSubmitBlock()
     //console.log(await storage.getItem(nonce.toString()));
 }, 5000);
-
-//0x5d62a9583e651e3c077e577ffd6155c3a8c3d89b31eda36945494c16d005d382
-//0x7465737400000000000000000000000000000000000000000000000000000000

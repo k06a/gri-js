@@ -1,28 +1,33 @@
 # Gaia Protocol Reference Implementation
 
+![Gaia1.0](./IMG_2695.JPG)
+
 ## Project Directory
 Project Contains:
-1. gaia-iot-sdk: client SDK for IoT Devices
+1. gaia-iot-sdk: client SDK for IoT Devices.. In this first iteration we are using DHT-22 Temperature and Humidity sensor.
 2. gaia-poa-chain: a blockchain running on proof of authority validator 
-    - gaia-db: persistent on disk database containing climate data
+    - gaia-db: persistent on-disk database containing climate data
     - gaia-rootchain: smart contracts to be deployed on Ethereum blockchain
 
 for the sake of simplicity, current construction will include one datablob per
-1 block, and each block will be processed in sequential order (First in, Last out)
+1 block, and each block will be processed in sequential order (First in, First out)
 
 ## Installation 
 First, ensure that you have latest version of Node JS and NPM installed
 
-Installing for `Gaia Chain`
+### Installing for `Gaia Chain`
 1. cd into gaia-poa-chain
 2. run `npm install`
 
-Installing for `Gaia Plasma Contract`
+### Installing for `Gaia Plasma Contract`
 1. install truffle globally via `npm install -g truffle`
 1. install Ganache-cli globally via `npm install -g ganache-cli`
 
-Installing for `gaia-iot-sdk`
-1. 
+### Installing for `gaia-iot-sdk`
+First, make sure you have DHT22 already connected to a running raspberry pi
+
+1. you must first discover and replace the IP address of your `Gaia Chain` within the `index.js` file 
+2. ssh into your pi and run `npm install` 
 
 ## Getting Started
 ### Deploy Plasma Contract on Testnet Blockchain
@@ -39,3 +44,6 @@ the Rootchain Contract should be deployed with an address shown on your console
 You should now have the Proof of Authority blockchain started on port 3000
 
 ### Running the Gaia IoT SDK 
+YOU MUST BE RUNNING A PI FOR THIS TO WORK
+1. cd into gaia-iot-sdk directory
+2. run `sudo node index`
